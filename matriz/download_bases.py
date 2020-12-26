@@ -51,8 +51,6 @@ def ler_usuarios():
     for usuario in base_usuarios:
         print(f'Usuários - {usuario[0]}')
 
-
-
 # ---------------------------------------------------------------------------------------- ESTABELECIMENTOS
 file_estabelecimentos = 'ESTABELECIMENTOS.xlsx'
 path_estabelecimentos = os.path.join(save_path, file_estabelecimentos)
@@ -83,7 +81,7 @@ def ler_pdv():
     for loja in base_pdvs:
         print(f'Loja {loja[0]}')
 
-baixar_estabelecimentos()
+
 
 # ---------------------------------------------------------------------------------------- MATRIZ
 file_matriz = 'MATRIZ PDV COMPLETA.xlsx'
@@ -181,6 +179,9 @@ def ler_matriz():
 
 
 # ----------------------------------------------------------------------------------------
+baixar_usuarios()
+baixar_estabelecimentos()
+baixar_matriz()
 
 '''
 Fazer o download das seguintes bases

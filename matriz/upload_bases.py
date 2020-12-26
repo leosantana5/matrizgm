@@ -39,64 +39,145 @@ mycursor = db.cursor()
 
 file_usuarios = 'USUÁRIOS.xlsx'
 path_usuarios = os.path.join(save_path, file_usuarios)
-
+insertusuarios = []
 def ler_usuarios():
   wb_usuarios = pd.read_excel(path_usuarios, "Sheet1", usecols=any, engine='openpyxl')
   base_usuarios = pd.DataFrame(wb_usuarios).to_numpy()
+
   for i in base_usuarios:
-    codigo = i[0]
-    nome = i[1]
-    empresa = i[2]
-    login = i[3]
-    email = i[4]
-    idperfilacessosistema = i[5]
-    cep = i[6]
-    logradouro = i[7]
-    numero = i[8]
-    complemento = i[9]
-    bairro = i[10]
-    cidade = i[11]
-    uf = i[12]
-    latitude = i[13]
-    longitude = i[14]
-    telefone = i[15]
-    datanascimento = i[16]
-    rg = i[17]
-    orgaoemissor = i[18]
-    cpf = i[19]
-    banco = i[20]
-    agencia = i[21]
-    conta = i[22]
-    tipoconta = i[23]
-    ctpsnumero = i[24]
-    ctpsserie = i[25]
-    ctpsestado = i[26]
-    admissao = i[27]
-    desligamento = i[28]
-    pis = i[29]
-    custooperacional = i[30]
-    nacionalidade = i[31]
-    estadocivil = i[32]
-    sexo = i[33]
-    status = i[34]
-    superior = i[35]
-    datainclusao = i[36]
-    dataalteracao = i[37]
-    statusexclusao = i[38]
+    codigo = str(i[0])
+    nome = str(i[1])
+    empresa = str(i[2])
+    login = str(i[3])
+    email = str(i[4])
+    idperfilacessosistema = str(i[5])
+    cep = str(i[6])
+    logradouro = str(i[7])
+    numero = str(i[8])
+    complemento = str(i[9])
+    bairro = str(i[10])
+    cidade = str(i[11])
+    uf = str(i[12])
+    latitude = str(i[13])
+    longitude = str(i[14])
+    telefone = str(i[15])
+    datanascimento = str(i[16])
+    rg = str(i[17])
+    orgaoemissor = str(i[18])
+    cpf = str(i[19])
+    banco = str(i[20])
+    agencia = str(i[21])
+    conta = str(i[22])
+    tipoconta = str(i[23])
+    ctpsnumero = str(i[24])
+    ctpsserie = str(i[25])
+    ctpsestado = str(i[26])
+    admissao = str(i[27])
+    desligamento = str(i[28])
+    pis = str(i[29])
+    custooperacional = str(i[30])
+    nacionalidade = str(i[31])
+    estadocivil = str(i[32])
+    sexo = str(i[33])
+    status = str(i[34])
+    superior = str(i[35])
+    datainclusao = str(i[36])
+    dataalteracao = str(i[37])
+    statusexclusao = str(i[38])
 
-    print(f'Usuários - {i[1]}')
+    if statusexclusao != "Inativo":
+      val = (codigo,
+             nome,
+             empresa,
+             login,
+             email,
+             idperfilacessosistema,
+             cep,
+             logradouro,
+             numero,
+             complemento,
+             bairro,
+             cidade,
+             uf,
+             latitude,
+             longitude,
+             telefone,
+             datanascimento,
+             rg,
+             orgaoemissor,
+             cpf,
+             banco,
+             agencia,
+             conta,
+             tipoconta,
+             ctpsnumero,
+             ctpsserie,
+             ctpsestado,
+             admissao,
+             desligamento,
+             pis,
+             custooperacional,
+             nacionalidade,
+             estadocivil,
+             sexo,
+             status,
+             superior,
+             datainclusao,
+             dataalteracao)
+      insertusuarios.append(val)
 
-# insert codigo, nome, empresa, login, email, idperfilacessosistema, cep, logradouro, numero, complemento, bairro, cidade, uf, latitude, longitude, telefone, datanascimento, rg, orgaoemissor, cpf, banco, agencia, conta, tipoconta, ctpsnumero, ctpsserie, ctpsestado, admissao, desligamento, pis, custooperacional, nacionalidade, estadocivil, sexo, status, superior, datainclusao, dataalteracao, statusexclusao
+
+  sqlusuarios = "INSERT INTO usuarios (codigo, " \
+            "nome, " \
+            "empresa, " \
+            "login, " \
+            "email, " \
+            "idperfilacessosistema, " \
+            "cep, " \
+            "logradouro, " \
+            "numero, " \
+            "complemento, " \
+            "bairro, " \
+            "cidade, " \
+            "uf, " \
+            "latitude, " \
+            "longitude, " \
+            "telefone, " \
+            "datanascimento, " \
+            "rg, " \
+            "orgaoemissor, " \
+            "cpf, " \
+            "banco, " \
+            "agencia, " \
+            "conta, " \
+            "tipoconta, " \
+            "ctpsnumero, " \
+            "ctpsserie, " \
+            "ctpsestado, " \
+            "admissao, " \
+            "desligamento, " \
+            "pis, " \
+            "custooperacional, " \
+            "nacionalidade, " \
+            "estadocivil, " \
+            "sexo, " \
+            "status, " \
+            "superior, " \
+            "datainclusao, " \
+            "dataalteracao) " \
+            "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+  mycursor.executemany(sqlusuarios, insertusuarios)
+  db.commit()
+  print("Usuários concluído")
+
 # ---------------------------------------------------------------------------------------- ESTABELECIMENTOS
 
 file_estabelecimentos = 'ESTABELECIMENTOS.xlsx'
 path_estabelecimentos = os.path.join(save_path, file_estabelecimentos)
-
+insertestabelecimentos = []
 def ler_estabelecimentos():
   wb_pdvs = pd.read_excel(path_estabelecimentos, "Sheet1", usecols=any, engine='openpyxl')
-  print("Leitura do arquivo estabelecimentos, concluída")
   base_pdvs = pd.DataFrame(wb_pdvs).to_numpy()
-  print("arquivo convertido em Data Frame")
   insert = []
   for i in base_pdvs:
     datainclusaoregistro = i[0]
@@ -128,25 +209,58 @@ def ler_estabelecimentos():
 
 
 
-    val = (codigo, bandeira, nome, logradouro, numero, bairro, cidade, uf, cep, endereco_completo, cnpj, latitude, longitude, regiao(uf), str(zona), status)
-    insert.append(val)
-  sql = "INSERT INTO estabelecimentos (cod_loja, bandeira, nome, logradouro, numero_logradouro, bairro, cidade, uf, cep, endereco_completo, cnpj, latitude, longitude, regional, zona, status) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-  mycursor.executemany(sql, insert)
-  db.commit()
-    # print(codigo,type(codigo), type(bandeira), type(nome), type(logradouro), type(numero), type(bairro), type(cidade), type(uf), type(cep), type(endereco_completo), type(cnpj), type(latitude), type(longitude), type(regiao(uf)), type(zona), type(status))
 
+    val = (codigo,
+           bandeira,
+           nome,
+           logradouro,
+           numero,
+           bairro,
+           cidade,
+           uf,
+           cep,
+           endereco_completo,
+           cnpj,
+           latitude,
+           longitude,
+           regiao(uf),
+           str(zona),
+           status)
+    insertestabelecimentos.append(val)
+
+
+  sqlestabelecimentos = "INSERT INTO estabelecimentos (cod_loja, " \
+          "bandeira, " \
+          "nome, " \
+          "logradouro, " \
+          "numero_logradouro, " \
+          "bairro, " \
+          "cidade, " \
+          "uf, " \
+          "cep, " \
+          "endereco_completo, " \
+          "cnpj, " \
+          "latitude, " \
+          "longitude, " \
+          "regional, " \
+          "zona, " \
+          "status) " \
+          "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+  mycursor.executemany(sqlestabelecimentos, insertestabelecimentos)
+  db.commit()
+  print("Estabelecimentos concluído")
 
 # ---------------------------------------------------------------------------------------- MATRIZ
 
 file_matriz = 'MATRIZ PDV COMPLETA.xlsx'
 path_matriz = os.path.join(save_path, file_matriz)
-
-
+insertmatriz = []
 def ler_matriz():
   wb_matriz = pd.read_excel(path_matriz, "Sheet1", usecols=any, engine='openpyxl')
-  print("Leitura do arquivo matriz, concluída")
   base_matriz = pd.DataFrame(wb_matriz).to_numpy()
-  print("arquivo convertido em Data Frame")
+
+
+
 
   for i in base_matriz:
     trademarketing = str(i[0])
@@ -159,9 +273,9 @@ def ler_matriz():
     codloja = str(i[7])
     loja = str(i[8])
     cnpj = str(i[9])
-    textoendereco = str(i[10])
+    logradouro = str(i[10])
     bairro = str(i[11])
-    cep = str(i[12])
+    cep = str(i[12]).replace("-", "")
     latitude = str(i[13])
     longitude = str(i[14])
     codcliente = str(i[15])
@@ -202,9 +316,84 @@ def ler_matriz():
     usuarioultimaalteracao = str(i[50])
     codvisita = f"{cliente} - {codloja}"
 
-    print(f'Matriz - {i[0]}')
+    val = (str(codvisita),
+           str(cliente),
+           str(familia),
+           str(codloja),
+           str(loja),
+           str(bandeira),
+           str(logradouro),
+           str(bairro),
+           str(cep),
+           str(latitude),
+           str(longitude),
+           str(cnpj),
+           str(regional),
+           str(zona),
+           str(uf),
+           str(gestorcoordenador),
+           str(supervisor),
+           str(lider),
+           str(cargocampo),
+           str(promotor),
+           str(tipoagendamento),
+           str(diasporsemana),
+           str(seg), str(ter), str(qua), str(qui), str(sex), str(sab), str(dom),
+           str(tarefa),
+           str(trademarketing),
+           str(departamento),
+           str(inicio),
+           str(termino),
+           str(nomeusuarioinclusao),
+           str(dataultimaalteracao),
+           str(usuarioultimaalteracao))
+    insertmatriz.append(val)
+
+  sqlmatriz = "INSERT INTO matriz_pdv (" \
+              "cod_visita, " \
+              "cliente, " \
+              "familia, " \
+              "codloja, " \
+              "loja, " \
+              "bandeira, " \
+              "logradouro, " \
+              "bairro, " \
+              "cep, " \
+              "latitude, " \
+              "longitude, " \
+              "cnpj, " \
+              "regional, " \
+              "zona, " \
+              "uf, " \
+              "terceira_hierarquia, " \
+              "segunda_hierarquia, " \
+              "primeira_hierarquia, " \
+              "perfil, " \
+              "promotor, " \
+              "tipoagendamento, " \
+              "diasporsemana, " \
+              "seg, ter, qua, qui, sex, sab, dom, " \
+              "tarefa, " \
+              "trademarketing, " \
+              "departamento, " \
+              "inicio, " \
+              "termino, " \
+              "nomeusuarioinclusao, " \
+              "dataultimaalteracao, " \
+              "usuarioultimaalteracao) " \
+              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+  mycursor.executemany(sqlmatriz, insertmatriz)
+  db.commit()
+  print("Matriz concluído")
+
+ler_usuarios()
 
 ler_estabelecimentos()
+
+ler_matriz()
+
+
+
 '''
 Fazer a leitura das seguintes bases
 
