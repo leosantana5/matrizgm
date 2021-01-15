@@ -24,6 +24,22 @@ def regiao (uf):
   elif uf == "PR" or uf == "RS" or uf == "SC":
     return ("Sul")
 
+now = datetime.now()
+dia = now.day
+mes = now.month
+ano = now.year
+hora = now.hour
+mes = now.month
+segundo = now.second
+
+hj = now.strftime("%d-%m-%Y")
+
+def dataconvertida(data):
+    date1 = datetime.strptime(data, '%d/%m/%Y').strftime("%d/%m/%Y")
+    print(date1)
+
+
+
 # ---------------------------------------------------------------------------------------- DATABASE
 
 db = pymysql.connect(
@@ -35,6 +51,24 @@ db = pymysql.connect(
   cursorclass=pymysql.cursors.DictCursor
   )
 mycursor = db.cursor()
+
+# sql1 = "DELETE FROM usuarios"
+# sql2 = "DELETE FROM matriz_pdv"
+# sql3 = "DELETE FROM ausencia"
+# sql4 = "DELETE FROM estabelecimentos"
+# sql5 = f"DELETE FROM planejados WHERE data = {hj}"
+# sql6 = f"DELETE FROM executados WHERE data = {hj}"
+#
+#
+# mycursor.execute(sql1)
+# mycursor.execute(sql2)
+# mycursor.execute(sql3)
+# mycursor.execute(sql4)
+# mycursor.execute(sql5)
+# mycursor.execute(sql6)
+#
+#
+# db.commit()
 # ---------------------------------------------------------------------------------------- USUÁRIOS
 
 file_usuarios = 'USUÁRIOS.xlsx'
@@ -250,13 +284,130 @@ def ler_estabelecimentos():
   db.commit()
   print("Estabelecimentos concluído")
 
-# ---------------------------------------------------------------------------------------- MATRIZ
+
+# ---------------------------------------------------------------------------------------- AUSENCIA
+
+file_ausencia = 'AUSENCIA.xlsx'
+path_ausencia = os.path.join(save_path, file_ausencia)
+insertausencia = []
+
+def ler_ausencia():
+  wb_aus = pd.read_excel(path_ausencia, "Sheet1", usecols=any, engine='openpyxl')
+  base_ausencia = pd.DataFrame(wb_aus).to_numpy()
+  insertausencia = []
+  for i in base_ausencia:
+        data = str(i[0])
+        statususuario = str(i[1])
+        nome = str(i[2])
+        tipo = str(i[3])
+        lider = str(i[4])
+        situacao = str(i[5])
+
+        val = (data, statususuario, nome, tipo, str(lider), situacao)
+        insertausencia.append(val)
+
+  sqlausencia = "INSERT INTO ausencia (data,statususuario,nome,tipo,lider,situacao) VALUES (%s,%s,%s,%s,%s,%s)"
+  mycursor.executemany(sqlausencia, insertausencia)
+  db.commit()
+  print("Ausencia concluído")
+
+# ---------------------------------------------------------------------------------------- PLANEJADOS
+
+file_planejados = 'PLANEJADOS.xlsx'
+path_planejados = os.path.join(save_path, file_planejados)
+insertplanejados = []
+
+def ler_planejados():
+  wb_plan = pd.read_excel(path_planejados, "Sheet1", usecols=any, engine='openpyxl')
+  base_planejados = pd.DataFrame(wb_plan).to_numpy()
+  insertplanejados = []
+
+  def verificar_for(base, visita):
+      for i in base:
+          if i[0] == visita:
+              return True
+          else:
+              False
+
+  for i in base_planejados:
+      data = str(i[0])
+      statusatual = str(i[1])
+      nomesuperior = str(i[2])
+      nomeusuario = str(i[3])
+      bandeira = str(i[4])
+      estabelecimento = str(i[5])
+      est = estabelecimento.split(" - ")
+      codloja = est[0]
+      uf = str(i[6])
+      cliente = str(i[7])
+      fotosantes = str(i[8])
+      fotosdepois = str(i[9])
+      esperadas = str(i[10])
+      codvisita = f"{cliente} - {codloja}"
+
+      val = (codvisita, cliente, codloja, estabelecimento, bandeira, uf, nomeusuario, statusatual, nomesuperior, data)
+
+      if cliente.find("/") == -1:
+          if verificar_for(insertplanejados, codvisita) == True:
+              a=""
+          else:
+            insertplanejados.append(val)
+      else:
+          a=""
+
+
+
+
+  sqlplanejados = "INSERT INTO planejados (codvisita, cliente, codloja, estabelecimento, bandeira, uf, nomeusuario, statusatual, nomesuperior, data) " \
+                  "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+  mycursor.executemany(sqlplanejados, insertplanejados)
+  db.commit()
+
+
+  print("Planejados concluído")
+
+# ---------------------------------------------------------------------------------------- EXECUTADOS
+
+file_executados = 'EXECUTADOS.xlsx'
+path_executados = os.path.join(save_path, file_executados)
+insertexecutados = []
+
+def ler_executados():
+  wb_exec = pd.read_excel(path_executados, "Sheet1", usecols=any, engine='openpyxl')
+  base_executados = pd.DataFrame(wb_exec).to_numpy()
+  insertexecutados = []
+  for i in base_executados:
+      usuariosistema = str(i[0])
+      nomesuperior = str(i[1])
+      marca = str(i[2])
+      estabelecimento = str(i[3])
+      est = estabelecimento.split(" - ")
+      codloja = est[0]
+      foiabastecido = str(i[4])
+      duracao = str(i[5])
+      horainicio = str(i[6])
+      horafinal = str(i[7])
+      data = str(i[8]).replace("-", "/")
+      codvisita = f"{marca} - {codloja}"
+
+      val = (codvisita, usuariosistema, nomesuperior, marca, codloja, estabelecimento, foiabastecido, duracao, horainicio, horafinal, data)
+      insertplanejados.append(val)
+
+  sqlexecutados = "INSERT INTO executados (codvisita, usuariosistema, nomesuperior, marca, codloja, estabelecimento, foiabastecido, duracao, horainicio, horafinal, data) " \
+                  "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+  mycursor.executemany(sqlexecutados, insertexecutados)
+  db.commit()
+
+  print(insertexecutados)
+  print("Executados concluído concluído")
+
+# ---------------------------------------------------------------------------------------- MATRIZ - ok
 
 file_matriz = 'MATRIZ PDV COMPLETA.xlsx'
 path_matriz = os.path.join(save_path, file_matriz)
 insertmatriz = []
 def ler_matriz():
-  wb_matriz = pd.read_excel(path_matriz, "Sheet1", usecols=any, engine='openpyxl')
+  wb_matriz = pd.read_excel(path_matriz, "Sheet1", usecols=any, engine='openpyxl').fillna("0")
   base_matriz = pd.DataFrame(wb_matriz).to_numpy()
 
 
@@ -386,11 +537,20 @@ def ler_matriz():
   db.commit()
   print("Matriz concluído")
 
+
+# ---------------------------------------------------------------------------------------- FUNÇÔES
+
 ler_usuarios()
 
 ler_estabelecimentos()
 
+ler_ausencia()
+
 ler_matriz()
+
+ler_planejados()
+
+ler_executados()
 
 
 

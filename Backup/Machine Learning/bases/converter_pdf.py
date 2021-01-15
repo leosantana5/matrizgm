@@ -10,3 +10,6 @@ def convert():
     print("Convertendo arquivo")
     tabula.convert_into(nome_pdf, nome_csv, pages="all")
     print(f"Arquivo convertido - {nome_csv}")
+
+
+convert()
